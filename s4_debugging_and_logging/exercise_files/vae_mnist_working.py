@@ -53,7 +53,6 @@ class Encoder(nn.Module):
        
     def reparameterization(self, mean, std,):
         epsilon = torch.rand_like(std)
-        
         z = mean + std*epsilon
         
         return z

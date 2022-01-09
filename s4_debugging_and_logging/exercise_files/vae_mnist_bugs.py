@@ -11,16 +11,19 @@ from torch.utils.data import DataLoader
 from torchvision.datasets import MNIST
 from torchvision.utils import save_image
 
+import pdb
+pdb.set_trace()
+
+
 # Model Hyperparameters
 dataset_path = 'datasets'
-cuda = True
-DEVICE = torch.device("cuda" if cuda else "cpu")
+DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 batch_size = 100
 x_dim  = 784
 hidden_dim = 400
 latent_dim = 20
 lr = 1e-3
-epochs = 20
+epochs = 10
 
 
 # Data loading
@@ -33,7 +36,7 @@ train_loader = DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=
 test_loader  = DataLoader(dataset=test_dataset,  batch_size=batch_size, shuffle=False)
 
 class Encoder(nn.Module):  
-    def __init__(self, input_dim, hidden_dim, latent_dim):
+    def __init__(self, input_dim, hidden_dim, latent_dim,DEVICE=torch.device("cuda" if torch.cuda.is_available() else "cpu")):
         super(Encoder, self).__init__()
         
         self.FC_input = nn.Linear(input_dim, hidden_dim)
@@ -44,16 +47,17 @@ class Encoder(nn.Module):
     def forward(self, x):
         h_       = torch.relu(self.FC_input(x))
         mean     = self.FC_mean(h_)
-        log_var  = self.FC_var(h_)                     
-                                                      
-        z        = self.reparameterization(mean, log_var)
+        log_var  = self.FC_var(h_)          
+
+        std      = torch.exp(0.5*log_var)                                               
+        z        = self.reparameterization(mean, std)
         
         return z, mean, log_var
        
-    def reparameterization(self, mean, var):
-        epsilon = torch.randn(*var.shape)
-        
-        z = mean + var*epsilon
+    def reparameterization(self, mean, std):
+        # epsilon = torch.randn(*std.shape).to(DEVICE)
+        epsilon = torch.rand_like(std)
+        z = mean + std*epsilon
         
         return z
     
@@ -61,7 +65,7 @@ class Decoder(nn.Module):
     def __init__(self, latent_dim, hidden_dim, output_dim):
         super(Decoder, self).__init__()
         self.FC_hidden = nn.Linear(latent_dim, hidden_dim)
-        self.FC_output = nn.Linear(latent_dim, output_dim)
+        self.FC_output = nn.Linear(hidden_dim, output_dim)
         
     def forward(self, x):
         h     = torch.relu(self.FC_hidden(x))
@@ -81,7 +85,7 @@ class Model(nn.Module):
         
         return x_hat, mean, log_var
     
-encoder = Encoder(input_dim=x_dim, hidden_dim=hidden_dim, latent_dim=latent_dim)
+encoder = Encoder(input_dim=x_dim, hidden_dim=hidden_dim, latent_dim=latent_dim, DEVICE=DEVICE)
 decoder = Decoder(latent_dim=latent_dim, hidden_dim = hidden_dim, output_dim = x_dim)
 
 model = Model(Encoder=encoder, Decoder=decoder).to(DEVICE)
@@ -106,6 +110,8 @@ for epoch in range(epochs):
     for batch_idx, (x, _) in enumerate(train_loader):
         x = x.view(batch_size, x_dim)
         x = x.to(DEVICE)
+
+        optimizer.zero_grad()
 
         x_hat, mean, log_var = model(x)
         loss = loss_function(x, x_hat, mean, log_var)
