@@ -2,6 +2,7 @@
 LFW dataloading
 """
 import argparse
+import enum
 import time
 
 import numpy as np
@@ -31,19 +32,27 @@ class LFWDataset(Dataset):
                 img_paths.append(path_+'/'+file_name)
                 labels.append(class_map[class_name])
 
+        
+
         self.labels=np.array(labels).copy()
         self.img_paths=np.array(img_paths).copy()
+        self.transform0=transforms.ToTensor()
+
         if transform is None:
-            self.transform=transforms.ToTensor()
+            self.transform=self.transform0
         else:
             self.transform = transform
+        
+        sample_img=self.transform0(Image.open( img_paths[0]))
+        self.all_imgs=torch.randn(*(len(img_paths), 3, *sample_img.shape[-2:]))
+        for idx in tqdm(range(len(img_paths))):
+            self.all_imgs[idx]=self.transform0(Image.open( img_paths[idx]))
         
     def __len__(self):
         return len(self.img_paths)
     
     def __getitem__(self, index: int) -> torch.Tensor:
-        img = Image.open( self.img_paths[index])
-        return self.transform(img)
+        return self.transform(self.all_imgs[index])
 
         
 if __name__ == '__main__':
@@ -67,7 +76,6 @@ if __name__ == '__main__':
     # Note we need a high batch size to see an effect of using many
     # number of workers
     batch_size=512
-
     dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=False,
                             num_workers=args.num_workers)
     
@@ -87,12 +95,12 @@ if __name__ == '__main__':
         res = [ ]
         for _ in tqdm(range(5)):
             start = time.time()
-            for batch_idx, batch in enumerate(dataloader):
-                if batch_idx > 10:
+            for batch_idx, batch in tqdm(enumerate(dataloader)):
+                if batch_idx > 100:
                     break
             end = time.time()
 
             res.append(end - start)
             
         res = np.array(res)
-        print(f'Timing: {np.mean(res)}+-{np.std(res)}')
+        print('Timing: {np.mean(res)}+-{np.std(res)}')

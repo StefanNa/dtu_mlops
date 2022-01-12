@@ -67,23 +67,26 @@ if __name__ == '__main__':
     # Note we need a high batch size to see an effect of using many
     # number of workers
     batch_size=512
-
-    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=False,
-                            num_workers=args.num_workers)
-    
-    
-    if args.visualize_batch:
-        # TODO: visualize a batch of images
-        dataiter = iter(dataloader)
-        images = dataiter.next()    
-        grid_img = torchvision.utils.make_grid(images, nrow=int(np.sqrt(batch_size))+1)
-        plt.figure()
-        plt.imshow(grid_img.permute(1, 2, 0))
-        plt.savefig('sample_batch.png')
-        pass
+    all_workers=[i for i in range(6)]
+    average_time=[]
+    averags_std=[]
+    for n_workers in all_workers:
+        dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=False,
+                                num_workers=n_workers)
         
-    if args.get_timing:
-        # lets do so repetitions
+        
+        if args.visualize_batch:
+            # TODO: visualize a batch of images
+            dataiter = iter(dataloader)
+            images = dataiter.next()    
+            grid_img = torchvision.utils.make_grid(images, nrow=int(np.sqrt(batch_size))+1)
+            plt.figure()
+            plt.imshow(grid_img.permute(1, 2, 0))
+            plt.savefig('sample_batch.png')
+            pass
+            
+        # if args.get_timing:
+        #     # lets do so repetitions
         res = [ ]
         for _ in tqdm(range(5)):
             start = time.time()
@@ -95,4 +98,10 @@ if __name__ == '__main__':
             res.append(end - start)
             
         res = np.array(res)
+
+        
         print(f'Timing: {np.mean(res)}+-{np.std(res)}')
+        average_time.append(np.mean(res))
+        averags_std.append(np.std(res))
+plt.errorbar(all_workers, average_time, yerr=averags_std, fmt='.k')
+plt.savefig('errorbar.png')
