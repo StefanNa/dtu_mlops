@@ -1,0 +1,1 @@
+https://wandb.ai/stefanna/dtu_mlops-s4_debugging_and_logging_exercise_files/reports/MNIST-VAE--VmlldzoxNDE5NzU4?accessToken=qny6dhwywvkq133yogja8odwlvnkobgadrnkp7pp2br19uor2rs2xmqky72o3jo3
