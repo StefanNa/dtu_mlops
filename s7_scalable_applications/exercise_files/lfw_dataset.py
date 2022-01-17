@@ -52,6 +52,8 @@ if __name__ == '__main__':
     parser.add_argument('-num_workers', default=2, type=int)
     parser.add_argument('-visualize_batch', action='store_true')
     parser.add_argument('-get_timing', action='store_true')
+    parser.add_argument('-batches_to_check', default=100, type=int)
+    
     args = parser.parse_args()
     
     lfw_trans = transforms.Compose([
@@ -83,7 +85,7 @@ if __name__ == '__main__':
         pass
         
     if args.get_timing:
-        # lets do so repetitions
+        # lets do some repetitions
         res = [ ]
         for _ in tqdm(range(5)):
             start = time.time()

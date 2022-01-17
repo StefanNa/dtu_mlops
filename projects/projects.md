@@ -72,7 +72,7 @@ It is better that you start out with a smaller project and then add along the wa
 
 4. When you formed groups and formulated a project you are allowed to start working on the actual code. I have included a 
    to-do list at the bottom that somewhat summaries what we have done in the course until know. You are **NOT** expected 
-   to fulfill all bullet points on the to-do list today, as you will continues to work on the project in the following two weeks.
+   to fulfill all bullet points on the to-do list today, as you will continue to work on the project in the following two weeks.
 
 ### Final objective
 
@@ -87,7 +87,8 @@ Final exercise for today is making a project description. Write around half to o
 The project description will serve as an guideline for us at the exam that you have somewhat reached the goals that you set out to do. 
 
 By the end of the day (17:00) you should upload your project description (in the `README.md` file) + whatever you have done on the project
-until now to a github repository. When this you have done this, on DTU Learn go to assignments and hand in (as a group) the project description.
+until now to your github repository. When this you have done this, on DTU Learn go to assignments and hand in (as a group) the link to
+your github repository.
 
 We will briefly (before next Monday) look over your github repository and project description to check that everything is fine. If we have
 any questions/concerns we will contact you.
@@ -122,7 +123,7 @@ point on the checklist for the exam.
 - [ ] Write unit tests related to the data part of your code
 - [ ] Write unit tests related to model construction
 - [ ] Calculate the coverage.
-- [ ] Get some continues integration running on the github repository
+- [ ] Get some continuous integration running on the github repository
 - [ ] (optional) Create a new project on `gcp` and invite all group members to it
 - [ ] Create a data storage on `gcp` for you data
 - [ ] Create a trigger workflow for automatically building your docker images
@@ -145,7 +146,7 @@ point on the checklist for the exam.
 - [ ] Make sure all group members have a understanding about all parts of the project
 - [ ] Create a presentation explaining your project
 - [ ] Uploaded all your code to github
-- [ ] (extra) Implemented pre-commit hooks for your project reposatory
+- [ ] (extra) Implemented pre-commit hooks for your project repository
 - [ ] (extra) Used Optuna to run hyperparameter optimization on your model
 
 ## Exam and Presentation
