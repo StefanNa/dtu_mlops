@@ -2,6 +2,7 @@
 import numpy as np
 from sklearn import datasets
 iris_X, iris_y = datasets.load_iris(return_X_y=True)
+from google.cloud import storage
 
 # Split iris data in train and test data
 # A random permutation, to split the data randomly
@@ -22,3 +23,14 @@ knn.predict(iris_X_test)
 import pickle
 with open('model.pkl', 'wb') as file:
     pickle.dump(knn, file)
+
+storage_client = storage.Client()
+bucket = storage_client.bucket('mlops-project-6')
+blob = bucket.blob("m22/model/model.pkl")
+
+blob.upload_from_filename('model.pkl')
+
+print(
+    "File {} uploaded to {}.".format(
+        'model.pkl', "m22/model/model.pkl"
+    ))
